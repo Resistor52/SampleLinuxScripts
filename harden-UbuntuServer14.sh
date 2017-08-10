@@ -13,7 +13,7 @@ apt-get -y install unattended-upgrades
 apt-get -y update && apt-get -y upgrade
 
 ##--Install apt-show-versions to test which packages can be upgraded
-https://cisofy.com/controls/PKGS-7394/
+# https://cisofy.com/controls/PKGS-7394/
 apt-get -y install apt-show-versions
 
 ##---------CONFIGURE PASSWORD QUALITY--------
