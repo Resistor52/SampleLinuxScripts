@@ -1,21 +1,27 @@
 #!/bin/bash
 
 #############################################################################################
-## Ubuntu 14 Install OSSEC                                                                ###
+## AWS Ubuntu 16 - Install OSSEC for Incident Response Log Analysis                       ###
 ## Reference:  http://ossec-docs.readthedocs.io/en/latest/manual/installation/index.html  ###
 #############################################################################################
 
+#Test to ensure on an AWS EC2 Instance
+if [ ! -f /sys/hypervisor/uuid ] || [ `head -c 3 /sys/hypervisor/uuid` != ec2 ]; then 
+echo "This script assumes it is run on an AWS EC2 Instance"
+exit 1
+fi
+
 #Test to ensure expected OS Distribution and Version
-OSTEST=$(grep "Ubuntu 15.10" /etc/*release | wc -c)
-if [ $OSTEST == 0 ]
+OSTEST=$(grep "Ubuntu 16." /etc/*release | wc -c)
+if [ $OSTEST == 0 ];
 then
-echo "Incorrect Operating System - Expected Ubuntu 15.10"
+echo "Incorrect Operating System - Expected Ubuntu 16"
 exit 1
 fi
 
 #Test to ensure script is run as root
 USERTEST=$(whoami)
-if [ $USERTEST != "root" ]
+if [ $USERTEST != "root" ];
 then
 echo "Incorrect Permissions - Run this script as root"
 exit 1
@@ -33,7 +39,7 @@ wget -U ossec http://www.ossec.net/files/ossec-hids-2.8.1-checksum.txt
 # NOTE: Update path to source fileas as needed to stay current
 SHA1A="$(cat ossec-hids-2.8.1-checksum.txt | tail -1 | cut -d" " -f 2)"
 SHA1B="$(sha1sum ossec-hids-2.8.1.tar.gz | cut -d" " -f 1)"
-if [ $SHA1A != $SHA1B ]
+if [ $SHA1A != $SHA1B ];
 then
 echo "Download SHA1 Hash Check Failed"
 echo $SHA1A
@@ -103,6 +109,9 @@ USER_ENABLE_FIREWALL_RESPONSE="n"
 USER_ENABLE_PF="n"
 EOF
 
+## Place Config File and create directory for logs analysis
+cp misc/ossec.conf /var/ossec/etc/ossec.conf 
+mkdir ~/analyze
 
 ## Install it
 cd ossec-hids-*
